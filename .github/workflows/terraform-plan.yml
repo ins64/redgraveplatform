@@ -1,12 +1,9 @@
-# Runs `terraform plan` on every pull request that touches terraform/.
-# The plan is shown in the job log so the team reviews it before anyone applies.
-# Repository secrets to create (Settings > Secrets and variables > Actions):
-#   SF_ORGANIZATION_NAME, SF_ACCOUNT_NAME, SF_USER, SF_PRIVATE_KEY (content of rsa_key.p8)
 name: terraform-plan
 
 on:
   pull_request:
-    paths: ["terraform/**"]
+    paths:
+      - "terraform/**"
 
 jobs:
   plan:
@@ -24,7 +21,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.17.0
-      - name: Write the private key from the secret (never echo it)
+      - name: Write the private key from the secret
         run: printf '%s\n' "${{ secrets.SF_PRIVATE_KEY }}" > "$RUNNER_TEMP/rsa_key.p8"
       - run: terraform fmt -check
       - run: terraform init -input=false
